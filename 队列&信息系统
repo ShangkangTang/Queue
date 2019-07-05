@@ -1,0 +1,152 @@
+/*
+   文件名：1_1_3_1.cpp
+   作者：汤善康
+   日期：2019年7月5日
+*/
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<malloc.h>
+#define MAX 100
+
+/*队列的创建与应用*/
+typedef int Status;
+typedef struct
+{
+	long ID;
+	char name[10];
+	int grade;
+}student, elemtype;
+//建立队列
+typedef struct
+{
+	elemtype *data;
+	int front;
+	int rear;
+}SqQueue;
+//创建初始化队列
+Status InitQueue(SqQueue &S)
+{
+	S.data = (elemtype*)malloc(sizeof(elemtype)*MAX);
+	if (S.data)
+	{
+		S.front = S.rear = 0;
+		return 1;
+	}
+	else
+		return 0;
+}
+//入队
+Status EnQueue(SqQueue &S, elemtype &L)
+{
+	if ((S.rear + 1) % MAX == S.front)//队列已满
+		return 0;//返回0
+	else
+	{
+		S.data[S.rear] = L;//将L插入循环队列队尾
+		S.rear = (S.rear + 1) % MAX;//修改队首指针
+		return 1;
+	}
+}
+//出队，并将出队元素赋值给L
+Status DeQueue(SqQueue &S, elemtype &L)
+{
+	if (S.rear == S.front)//队列为空不能出队
+		return 0;//返回0
+	else//队列非空
+	{
+		L = S.data[S.front];//将队头元素取出放入L
+		S.front = (S.front + 1) % MAX;//修改队首指针
+		return 1;
+	}
+}
+//输入学生信息
+void Input(elemtype &L)
+{
+	printf("请输入学生ID：\n");
+	scanf("%d", &L.ID);
+	printf("请输入学生姓名：\n");
+	scanf("%s", &L.name);
+	printf("请输入学生成绩：\n");
+	scanf("%d", &L.grade);
+}
+//输出打印学生信息
+void Output(elemtype &L)
+{
+	printf("%8d%8s%8d\n", L.ID, L.name, L.grade);
+}
+//打印队列元素
+Status Print(SqQueue &S)
+{
+	int i;
+	if (S.front == S.rear)
+		return 0;
+	else
+	{
+		if (S.front < S.rear)
+		{
+			for (i = S.front; i < S.rear; i++)
+			{
+				Output(S.data[i]);
+			}
+		}
+		else
+		{
+			for (i = S.front; i < MAX; i++)
+			{
+				Output(S.data[i]);
+			}
+			for (i = 0; i < S.rear; i++)
+			{
+				Output(S.data[i]);
+			}
+		}
+		return 1;
+	}
+
+}
+int main()
+{
+	SqQueue S;
+	elemtype a;
+	int i;//选择程序的序号
+	printf("************\n");
+	printf("1.建立队列\n");
+	printf("2.入队\n");
+	printf("3.出队\n");
+	printf("4.显示全部学生信息\n");
+	printf("************\n");
+
+	while (1)
+	{
+		printf("输入你要选择的程序序号：\n");
+		scanf("%d", &i);
+		switch (i)
+		{
+		case 1:
+			if (InitQueue(S) == 1)
+				printf("成功建立队列\n");
+			else
+				printf("队列建立失败\n");
+			break;
+		case 2:
+			Input(a);
+			if (EnQueue(S, a) == 1)
+				printf("成功入队\n");
+			else
+				printf("入队失败\n");
+			break;
+		case 3:
+			if (DeQueue(S, a) == 1)
+				printf("成功出队\n");
+			else
+				printf("出队失败\n");
+			break;
+		case 4:
+			if (Print(S) == 0)
+				printf("队列为空\n");
+			else
+				printf("输出完毕\n");
+		}
+	}
+}
